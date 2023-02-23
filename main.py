@@ -1,8 +1,9 @@
 import cv2
 from kalmanfilter import KalmanFilter
+from kalmanfilter import KF
 import numpy as np
 
-
+kfnew = KF()
 kf = KalmanFilter()
 cap = cv2.VideoCapture("Test.mp4")
 
@@ -46,13 +47,16 @@ while True:
 
     predicted = kf.predict(centerX, centerY)
 
-    cv2.circle(img, (centerX, centerY), 5, (255, 255, 255), 4)
+    cv2.circle(img, (centerX, centerY), 5, (255, 255, 255), 4)#центр цели
 
 
     predicted = kf.predict(predicted[0], predicted[1])
+    cv2.circle(img, predicted, 5, (0, 255, 255), 4)  # старый калман
+
+    predictedNewCalman = kfnew.predict(centerX, centerY)
+    cv2.circle(img,  predictedNewCalman, 5, (255, 0, 0), 4) #новый калман
 
 
-    cv2.circle(img,predicted, 5, (0,255,255),4)#1
 
 
 
