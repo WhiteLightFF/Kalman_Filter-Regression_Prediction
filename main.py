@@ -1,11 +1,14 @@
 import cv2
 from kalmanfilter import KalmanFilter
 from kalmanfilter import KF
+from regression import Regression
 import numpy as np
+
 
 kfnew = KF()
 kf = KalmanFilter()
 cap = cv2.VideoCapture("Test.mp4")
+rg = Regression()
 
 
 
@@ -45,25 +48,30 @@ while True:
         break
     centerX = int(bbox[0]+ bbox[2]/2)
     centerY = int(bbox[1]+ bbox[3]/2)
-    print(centerX, centerY)
+
 
     predicted = kf.predict(centerX, centerY)
 
     cv2.circle(img, (centerX, centerY), 5, (255, 255, 255), 4)#center object
 
 
+    #regression
+
+    predictedReg = rg.predict(centerX, centerY, img)
+    print(predictedReg)
+    #cv2.circle(img, (predictedReg[0],predictedReg[1]), 5, (255, 0, 255), 4)
+
+
     predicted = kf.predict(predicted[0], predicted[1])
-    cv2.circle(img, predicted, 5, (0, 255, 255), 4)  # old kalman
+
+    #cv2.circle(img, predicted, 5, (0, 255, 255), 4)  # old kalman
 
     predictedNewCalman = kfnew.predict(centerX, centerY)
-    cv2.circle(img,  predictedNewCalman, 5, (255, 0, 0), 4) #new kalman
 
-
-
+    #cv2.circle(img,  predictedNewCalman, 5, (255, 0, 0), 4) #new kalman
 
     cv2.imshow("Frame", img)
     cv2.setMouseCallback("Frame", onMouse)
-    key= cv2.waitKey(0
-                     )
+    key= cv2.waitKey(0)
     if key ==27:
         break
