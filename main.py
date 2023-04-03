@@ -2,16 +2,27 @@ import cv2
 from kalmanfilter import KalmanFilter
 from kalmanfilter import KF
 from regression import Regression
+from LSTM import LSTM
 import numpy as np
+import csv
 
 
 kfnew = KF()
-kf = KalmanFilter()
-cap = cv2.VideoCapture("Test.mp4")
+cap = cv2.VideoCapture("Test3.mp4")
 rg = Regression()
+lstm = LSTM()
+
+with open("Source.csv", "w") as file2:
+    Source = csv.writer(file2)
+    Source.writerow(("x0", "y0"))
+with open("Predict.csv", "w") as file:
+    Predict = csv.writer(file)
+    Predict.writerow(("x1", "y1"))
 
 
 
+
+#Tracker Init
 tracker = cv2.legacy.TrackerMOSSE_create()
 success, img = cap.read()
 bbox = cv2.selectROI("Tracking", img, False)
@@ -30,11 +41,9 @@ def ringBuffer(bbox):
 
 while True:
     ret, img = cap.read()
-
     timer = cv2.getTickCount()
     success, img = cap.read()
     success, bbox = tracker.update(img)
-    #print(bbox)
     if success:
         drawBox(img, bbox)
     else:
@@ -48,27 +57,26 @@ while True:
         break
     centerX = int(bbox[0]+ bbox[2]/2)
     centerY = int(bbox[1]+ bbox[3]/2)
-
-
-    predicted = kf.predict(centerX, centerY)
+    coord = [centerX, centerY]
+    # with open("Source.csv", "a") as file2:
+    #     Source = csv.writer(file2)
+    #     Source.writerow(coord)
 
     cv2.circle(img, (centerX, centerY), 5, (255, 255, 255), 4)#center object
-
-
-    #regression
-
-    predictedReg = rg.predict(centerX, centerY, img)
-    print(predictedReg)
-    #cv2.circle(img, (predictedReg[0],predictedReg[1]), 5, (255, 0, 255), 4)
-
-
-    predicted = kf.predict(predicted[0], predicted[1])
-
-    #cv2.circle(img, predicted, 5, (0, 255, 255), 4)  # old kalman
-
+    #KalmanFilter
     predictedNewCalman = kfnew.predict(centerX, centerY)
+    cv2.circle(img, predictedNewCalman, 5, (255, 0, 0), 4)
+    #regression
+    predictedReg = rg.predict(centerX, centerY, img)
+    #LSTM
+    predictedLSTM = lstm.LSTM_Predict(centerX, centerY)
+    for i in range(0,len(predictedLSTM)):
+        cv2.circle(img, (int(predictedLSTM[i][0]), int(predictedLSTM[i][1])), 5, (85*i, 85*i, 255), 4)
 
-    #cv2.circle(img,  predictedNewCalman, 5, (255, 0, 0), 4) #new kalman
+
+
+
+
 
     cv2.imshow("Frame", img)
     cv2.setMouseCallback("Frame", onMouse)

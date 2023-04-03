@@ -1,10 +1,14 @@
 import numpy as np
 import cv2
+from collections import deque
 class Regression:
-    n = 5
-    pointX = []
-    pointY = []
+    n = 10
+    #pointX = []
+    #pointY = []
+    pointX = deque([0,0,0,0,0, 0,0,0,0,0],maxlen= n)
+    pointY = deque([0,0,0,0,0, 0,0,0,0,0],maxlen= n)
     timeStep = list(range(1, n+1))
+    #timestpe = deque(maxlen= n)
 
     t11 = n
     t12 = np.sum(timeStep)
@@ -24,16 +28,16 @@ class Regression:
     Bx = np.linalg.inv(T.T @ T) @ T.T
     By = np.linalg.inv(T.T @ T) @ T.T
     def predict(self, x, y, img):
-        if len(self.pointX)  < self.n:
-            self.pointX.append(x)
-            self.pointY.append(y)
-            return 0,0
-
-
-
-        if len(self.pointX) == self.n:
-            self.pointX.pop(0)
-            self.pointY.pop(0)
+        # if len(self.pointX)  < self.n:
+        #     self.pointX.append(x)
+        #     self.pointY.append(y)
+        #     return 0,0
+        #
+        #
+        #
+        # if len(self.pointX) == self.n:
+        #     self.pointX.pop(0)
+        #     self.pointY.pop(0)
 
         self.pointX.append(x)
         self.pointY.append(y)
@@ -59,11 +63,17 @@ class Regression:
         Bx = self.Bx @ X
         By = self.By @ Y
         self.img = img
-        for a in range(10):
+
+        for a in range(11,100):
             x_predict = Bx[0] + Bx[1]*(a) + Bx[2]*(a)**2
             y_predict = By[0] + By[1] *(a) + By[2] * (a)**2
-            cv2.circle(img, (int(x_predict), int(y_predict)), 3, (25*a, 255, 25*a), 2)
-
+            cv2.circle(img, (int(x_predict), int(y_predict)), 3, (25*a/6, 255, 25*a/6), 2)
+            print("Output: ", int(x_predict), int(y_predict))
+        # a = 6
+        # x_predict = Bx[0] + Bx[1] * (a) + Bx[2] * (a) ** 2
+        # y_predict = By[0] + By[1] *(a) + By[2] * (a)**2
+        # cv2.circle(img, (int(x_predict), int(y_predict)), 3, (0, 255, 0), 2)
+        # print("Output: ", int(x_predict), int(y_predict))
         return int(x_predict), int(y_predict)
 
 
