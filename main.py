@@ -8,7 +8,7 @@ import csv
 
 
 kfnew = KF()
-cap = cv2.VideoCapture("Test3.mp4")
+cap = cv2.VideoCapture("Test2.mp4")
 rg = Regression()
 lstm = LSTM()
 
@@ -58,9 +58,10 @@ while True:
     centerX = int(bbox[0]+ bbox[2]/2)
     centerY = int(bbox[1]+ bbox[3]/2)
     coord = [centerX, centerY]
-    # with open("Source.csv", "a") as file2:
-    #     Source = csv.writer(file2)
-    #     Source.writerow(coord)
+    print(centerX, centerY)
+    with open("Source.csv", "a") as file2:
+        Source = csv.writer(file2)
+        Source.writerow(coord)
 
     cv2.circle(img, (centerX, centerY), 5, (255, 255, 255), 4)#center object
     #KalmanFilter
@@ -69,9 +70,9 @@ while True:
     #regression
     predictedReg = rg.predict(centerX, centerY, img)
     #LSTM
-    predictedLSTM = lstm.LSTM_Predict(centerX, centerY)
-    for i in range(0,len(predictedLSTM)):
-        cv2.circle(img, (int(predictedLSTM[i][0]), int(predictedLSTM[i][1])), 5, (85*i, 85*i, 255), 4)
+    # predictedLSTM = lstm.LSTM_Predict(centerX, centerY)
+    # for i in range(0,len(predictedLSTM)):
+    #     cv2.circle(img, (int(predictedLSTM[i][0]), int(predictedLSTM[i][1])), 5, (85*i, 85*i, 255), 4)
 
 
 

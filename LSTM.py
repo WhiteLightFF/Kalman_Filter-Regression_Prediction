@@ -49,7 +49,7 @@ X, y = split_sequences(dataset, n_steps_in, n_steps_out)
 n_features = X.shape[2]
 # define model
 
-train = 1
+train = 0
 
 
 model = Sequential()

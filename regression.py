@@ -68,7 +68,7 @@ class Regression:
             x_predict = Bx[0] + Bx[1]*(a) + Bx[2]*(a)**2
             y_predict = By[0] + By[1] *(a) + By[2] * (a)**2
             cv2.circle(img, (int(x_predict), int(y_predict)), 3, (25*a/6, 255, 25*a/6), 2)
-            print("Output: ", int(x_predict), int(y_predict))
+
         # a = 6
         # x_predict = Bx[0] + Bx[1] * (a) + Bx[2] * (a) ** 2
         # y_predict = By[0] + By[1] *(a) + By[2] * (a)**2
